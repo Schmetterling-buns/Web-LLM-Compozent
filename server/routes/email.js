@@ -1,35 +1,24 @@
 const express = require('express');
-const router = express.Router();
-const nodemailer = require('nodemailer');
+const sendEmail = require('../utils/mailer');
 
+const router = express.Router();
+
+// POST /api/send-email
 router.post('/send-email', async (req, res) => {
   const { to, subject, text } = req.body;
 
-  if (!to || !subject || !text) {
-    return res.status(400).json({ error: 'All fields are required.' });
-  }
-
   try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to,
-      subject,
-      text
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Email sent successfully ✅' });
+    const emailSent = await sendEmail(to, subject, text);
+    if (emailSent) {
+      console.log(`✅ Email successfully sent to ${to}`);
+      res.status(200).json({ message: 'Email sent successfully.' });
+    } else {
+      console.error(`❌ Failed to send email to ${to}`);
+      res.status(500).json({ message: 'Failed to send email.' });
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Email failed to send ❌' });
+    console.error('❌ Error in /api/send-email route:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 });
 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <h1>Login</h1>
+
+  <form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p id="loginMessage" style="display:none;"></p>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const loginMessage = document.getElementById('loginMessage');
+
+      if (username === 'admin' && password === 'password') {
+        loginMessage.style.color = 'green';
+        loginMessage.textContent = 'Login successful! Redirecting...';
+        loginMessage.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 2000);
+      } else {
+        loginMessage.style.color = 'red';
+        loginMessage.textContent = 'Invalid username or password.';
+        loginMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
