@@ -5,6 +5,32 @@ body {
   padding: 0;
 }
 
+nav {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+section {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 h1 {
   text-align: center;
   color: #333;
@@ -42,15 +68,16 @@ input:focus, textarea:focus {
 }
 
 button {
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
   border: none;
   cursor: pointer;
+  padding: 10px;
   transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #218838;
+  background-color: #0056b3;
 }
 
 #responseMessage {
