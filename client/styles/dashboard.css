@@ -31,6 +31,32 @@ section {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+textarea, input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+p {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
 h1 {
   text-align: center;
   color: #333;
@@ -51,39 +77,25 @@ label {
   font-weight: bold;
 }
 
-input, textarea, button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 input, textarea {
   transition: border-color 0.3s ease;
 }
 
 input:focus, textarea:focus {
   border-color: #28a745;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
 }
 
-button {
+header {
+  text-align: center;
   background-color: #007bff;
   color: white;
-  border: none;
-  cursor: pointer;
   padding: 10px;
-  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
-
-#responseMessage {
-  text-align: center;
-  font-size: 16px;
-  margin-top: 10px;
+input, textarea, button {
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 600px) {
@@ -93,7 +105,17 @@ button:hover {
     padding: 15px;
   }
 
+  section {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  nav {
+    font-size: 14px;
+  }
+
   input, textarea, button {
     font-size: 14px;
+    padding: 10px;
   }
 }

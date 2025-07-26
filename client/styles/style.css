@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -14,36 +15,44 @@ h1 {
   color: #333;
 }
 
-form {
-  max-width: 400px;
-  padding: 20px;
+.login-container {
+  max-width: 500px;
+  padding: 30px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
-label {
-  display: block;
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container label {
   margin-bottom: 8px;
   font-weight: bold;
 }
 
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.login-container input {
+  padding: 15px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
 }
 
-button {
+.login-container button {
   background-color: #007bff;
   color: white;
+  font-size: 18px;
+  padding: 15px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-button:hover {
+.login-container button:hover {
   background-color: #0056b3;
 }
 
@@ -51,4 +60,37 @@ button:hover {
   text-align: center;
   font-size: 16px;
   margin-top: 10px;
+}
+
+header {
+  text-align: center;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+input, button {
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  .login-container {
+    max-width: 90%;
+    padding: 20px;
+  }
+
+  input, button {
+    font-size: 14px;
+    padding: 10px;
+  }
 }
