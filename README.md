@@ -20,6 +20,7 @@ An agentic AI-powered web application for:
 npm install
 npm run dev
 
-## Demo Video 
+## 🎥 Demo Video
 
-https://github.com/user-attachments/assets/4c991bcb-1d04-4dca-ae97-8bc11e75c69d
+👉 [Click here to watch the demo](https://github.com/user-attachments/assets/380f6a75-09a3-429c-9442-45a670cf6974)
+
