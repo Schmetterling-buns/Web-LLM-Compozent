@@ -22,5 +22,5 @@ npm run dev
 
 ## 🎥 Demo Video
 
-👉 [Click here to watch the demo](https://github.com/user-attachments/assets/380f6a75-09a3-429c-9442-45a670cf6974)
+[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://github.com/user-attachments/assets/380f6a75-09a3-429c-9442-45a670cf6974)
 
