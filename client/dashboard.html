@@ -6,6 +6,39 @@
   <title>Dashboard</title>
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="icon" href="../favicon_io/favicon.ico" type="image/x-icon">
+  <style>
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 2px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 17px;
+    }
+
+    .toast.show {
+      visibility: visible;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+      from { bottom: 0; opacity: 0; }
+      to { bottom: 30px; opacity: 1; }
+    }
+
+    @keyframes fadeout {
+      from { bottom: 30px; opacity: 1; }
+      to { bottom: 0; opacity: 0; }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -36,6 +69,29 @@
     <p id="emailResponse" style="display:none;"></p>
   </section>
 
+  <div id="toast" class="toast">Action completed successfully!</div>
+
   <script src="email.js"></script>
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.getElementById('emailForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const button = event.target.querySelector('button');
+      button.disabled = true;
+      button.textContent = 'Sending...';
+
+      setTimeout(() => {
+        button.disabled = false;
+        button.textContent = 'Send Email';
+        showToast('Email sent successfully!');
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
