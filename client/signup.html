@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <header>
+    <h1>Sign Up</h1>
+  </header>
+
+  <div class="signup-container" style="width: 30%; height: auto; margin: 20px auto 0; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <form id="signupForm" style="width: 100%; max-width: 400px; margin: auto; display: flex; flex-direction: column; align-items: center; padding: 10px;">
+      <label for="name" style="width: 100%; margin-bottom: 5px; font-weight: bold;">Name:</label>
+      <input type="text" id="name" name="name" placeholder="Enter your full name" required style="width: calc(100% - 20px); margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+
+      <label for="username" style="width: 100%; margin-bottom: 5px; font-weight: bold;">Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter your username" required style="width: calc(100% - 20px); margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+
+      <label for="password" style="width: 100%; margin-bottom: 5px; font-weight: bold;">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required style="width: calc(100% - 20px); margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+
+      <label for="role" style="width: 100%; margin-bottom: 5px; font-weight: bold;">Role:</label>
+      <select id="role" name="role" required style="width: calc(100% - 20px); margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 6px;" size="1">
+        <option value="teacher" selected>Teacher</option>
+        <option value="student">Student</option>
+      </select>
+
+      <button type="submit" style="width: calc(100% - 20px); padding: 12px; font-size: 16px; background-color: #007BFF; color: white; border: none; border-radius: 6px; cursor: pointer;">Sign Up</button>
+    </form>
+
+    <p id="signupMessage" style="display:none; text-align: center; margin-top: 10px; font-size: 1em;"></p>
+  </div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      const name = document.getElementById('name').value;
+      const signupMessage = document.getElementById('signupMessage');
+      signupMessage.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, role, name })
+        });
+
+        const result = await response.json();
+        signupMessage.style.display = 'block';
+        signupMessage.style.color = response.ok ? 'green' : 'red';
+        signupMessage.textContent = result.message || 'Signup successful! You can now log in.';
+
+        if (response.ok) {
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        }
+      } catch (error) {
+        signupMessage.style.display = 'block';
+        signupMessage.style.color = 'red';
+        signupMessage.textContent = 'An error occurred. Please try again later.';
+      }
+    });
+  </script>
+</body>
+</html>

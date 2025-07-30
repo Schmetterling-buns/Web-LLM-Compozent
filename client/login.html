@@ -23,26 +23,44 @@
     </form>
 
     <p id="loginMessage" style="display:none;"></p>
+
+    <div style="text-align: center; margin-top: 10px;">
+      <p>Don't have an account? <a href="signup.html">Sign up here</a>.</p>
+    </div>
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', (event) => {
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
       event.preventDefault();
 
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const loginMessage = document.getElementById('loginMessage');
+      loginMessage.style.display = 'none';
 
-      if (username === 'admin' && password === 'password') {
-        loginMessage.style.color = 'green';
-        loginMessage.textContent = 'Login successful! Redirecting...';
-        loginMessage.style.display = 'block';
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 2000);
-      } else {
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          loginMessage.style.color = 'green';
+          loginMessage.textContent = 'Login successful! Redirecting...';
+          loginMessage.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 2000);
+        } else {
+          loginMessage.style.color = 'red';
+          loginMessage.textContent = result.message || 'Invalid username or password.';
+          loginMessage.style.display = 'block';
+        }
+      } catch (error) {
         loginMessage.style.color = 'red';
-        loginMessage.textContent = 'Invalid username or password.';
+        loginMessage.textContent = 'An error occurred. Please try again later.';
         loginMessage.style.display = 'block';
       }
     });
