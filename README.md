@@ -20,7 +20,7 @@ An agentic AI-powered web application for:
 npm install
 npm run dev
 
-https://github.com/user-attachments/assets/210fc107-caf1-4fa2-b009-c6538890f79b
+
 
 
 
