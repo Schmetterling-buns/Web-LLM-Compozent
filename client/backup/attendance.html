@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="icon" href="../favicon_io/favicon.ico" type="image/x-icon">
+  <style>
+    input, select {
+      width: calc(100% - 20px);
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Attendance Tracking</h1>
+  </header>
+
+  <nav>
+    <a href="login.html">Login</a> |
+    <a href="teacher-dashboard.html">Dashboard</a> |
+    <a href="attendance.html">Attendance</a> |
+    <a href="llm.html">LLM Insights</a>
+  </nav>
+
+  <section id="attendanceSection" style="width: 30%; margin: 20px auto 0; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center;">Track Attendance</h2>
+    <form id="attendanceForm" style="width: 100%; max-width: 400px; margin: auto; display: flex; flex-direction: column; align-items: center; padding: 10px;">
+      <label for="studentId" style="width: 100%; margin-bottom: 5px;">Student ID:</label>
+      <input type="text" id="studentId" name="studentId" required style="width: calc(100% - 20px); margin-bottom: 10px;">
+
+      <label for="date" style="width: 100%; margin-bottom: 5px;">Date:</label>
+      <input type="date" id="date" name="date" required style="width: calc(100% - 20px); margin-bottom: 10px;">
+
+      <label for="status" style="width: 100%; margin-bottom: 5px;">Status:</label>
+      <select id="status" name="status" required style="width: calc(100% - 20px); margin-bottom: 10px;">
+        <option value="Present">Present</option>
+        <option value="Absent">Absent</option>
+      </select>
+
+      <button type="submit" style="width: calc(100% - 20px);">Submit Attendance</button>
+    </form>
+    <p id="attendanceResponse" style="display:none;"></p>
+  </section>
+
+  <script src="attendance.js"></script>
+</body>
+</html>

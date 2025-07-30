@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <link rel="stylesheet" href="../styles/dashboard.css">
+  <link rel="icon" href="../../favicon_io/favicon.ico" type="image/x-icon">
+  <style>
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 2px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 17px;
+    }
+
+    .toast.show {
+      visibility: visible;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+      from { bottom: 0; opacity: 0; }
+      to { bottom: 30px; opacity: 1; }
+    }
+
+    @keyframes fadeout {
+      from { bottom: 30px; opacity: 1; }
+      to { bottom: 0; opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Send Email</h1>
+  </header>
+
+  <nav>
+    <!-- <a href="login.html">Login</a> | -->
+    <a href="student-dashboard.html">Home</a> |
+    <a href="Email.html">Email</a> |
+    <a href="attendance.html">Attendance</a> |
+    <a href="llm.html">LLM Insights</a>
+  </nav>
+
+  <section id="emailSection" style="width: 30%; margin: 20px auto 0; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center;">Send Email</h2>
+    <form id="emailForm" style="width: 100%; max-width: 400px; margin: auto; display: flex; flex-direction: column; align-items: center; padding: 10px;">
+      <label for="to" style="width: 100%; margin-bottom: 5px;">To:</label>
+      <input type="email" id="to" name="to" required style="width: calc(100% - 20px); margin-bottom: 10px;">
+
+      <label for="subject" style="width: 100%; margin-bottom: 5px;">Subject:</label>
+      <input type="text" id="subject" name="subject" required style="width: calc(100% - 20px); margin-bottom: 10px;">
+
+      <label for="message" style="width: 100%; margin-bottom: 5px;">Message:</label>
+      <textarea id="message" name="message" required style="width: calc(100% - 20px); margin-bottom: 10px;"></textarea>
+
+      <button type="submit" style="width: calc(100% - 20px);">Send Email</button>
+    </form>
+    <p id="emailResponse" style="display:none;"></p>
+  </section>
+
+  <div id="toast" class="toast">Action completed successfully!</div>
+
+  <script src="email.js"></script>
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    document.getElementById('emailForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const button = event.target.querySelector('button');
+      button.disabled = true;
+      button.textContent = 'Sending...';
+
+      setTimeout(() => {
+        button.disabled = false;
+        button.textContent = 'Send Email';
+        showToast('Email sent successfully!');
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
