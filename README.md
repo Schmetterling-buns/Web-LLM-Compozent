@@ -19,3 +19,8 @@ An agentic AI-powered web application for:
 ```bash
 npm install
 npm run dev
+```
+
+## 🎥 Demo Video
+
+[Click here to watch the demo video](https://github.com/user-attachments/assets/380f6a75-09a3-429c-9442-45a670cf6974)
