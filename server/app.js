@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const emailRoutes = require('./routes/email');
 const attendanceRoutes = require('./routes/attendance');
+const llmRoute = require('./routes/llm');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use('/api', emailRoutes);
 app.use('/api', attendanceRoutes);
+app.use('/api/llm', llmRoute);
 app.get('/', (req, res) => {
   res.send('Web LLM Backend Running ✅');
 });

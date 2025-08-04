@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 const router = express.Router();
 
@@ -14,4 +14,4 @@ router.post('/attendance', (req, res) => {
   res.status(200).json({ message: 'Attendance recorded successfully.' });
 });
 
-module.exports = router;
+export default router;
