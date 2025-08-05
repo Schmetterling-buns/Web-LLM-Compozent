@@ -1,10 +1,12 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
 
-const emailRoutes = require('./routes/email');
-const attendanceRoutes = require('./routes/attendance');
-const llmRoute = require('./routes/llm');
+import emailRoutes from './routes/email.js';
+import attendanceRoutes from './routes/attendance.js';
+import llmRoute from './routes/llm.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
