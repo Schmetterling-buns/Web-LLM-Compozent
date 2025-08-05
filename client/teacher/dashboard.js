@@ -8,12 +8,8 @@ document.getElementById('emailForm').addEventListener('submit', async (event) =>
   const emailResponse = document.getElementById('emailResponse');
 
   try {
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ to, subject, text: message }),
+    const response = await fetch(`/api/send-email?to=${to}&subject=${subject}&text=${message}`, {
+      method: 'GET',
     });
 
     if (response.ok) {

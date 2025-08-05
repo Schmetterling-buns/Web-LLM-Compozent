@@ -39,14 +39,38 @@
 
   <script>
     document.getElementById('ask').onclick = async () => {
+      console.log('Ask button clicked');
       const prompt = document.getElementById('prompt').value;
-      const res = await fetch('/api/llm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
-      const data = await res.json();
-      document.getElementById('response').textContent = data.response;
+      const responseElement = document.getElementById('response');
+      responseElement.textContent = '';
+
+      if (!prompt) {
+        alert('Please enter a prompt.');
+        return;
+      }
+
+      try {
+        console.log('Sending request to http://localhost:5000/api/llm with prompt:', prompt);
+        const response = await fetch('http://localhost:5000/api/llm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          console.log('Received chunk:', chunk);
+          responseElement.textContent += chunk;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to get a response from the server.');
+      }
     };
   </script>
 </body>

@@ -32,6 +32,12 @@
 
   <script>
     // Add JavaScript functionality here if needed
+    // Add functionality for buttons
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('click', () => {
+        alert(`You clicked: ${button.textContent}`);
+      });
+    });
   </script>
 </body>
 </html>
