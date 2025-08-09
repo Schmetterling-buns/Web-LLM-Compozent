@@ -1,100 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LLM Insights</title>
-  <link rel="stylesheet" href="../styles/style.css">
-  <link rel="stylesheet" href="../styles/dashboard.css">
-  <link rel="icon" href="../../favicon_io/favicon.ico" type="image/x-icon">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LLM Insights — Web LLM</title>
+  <link rel="icon" href="../../favicon_io/favicon.ico" type="image/x-icon" />
+
   <style>
-    textarea {
-      width: calc(100% - 20px);
-      margin-bottom: 10px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #3a6ee8;
+      --accent-2: #2554b0;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    body {
+      background: var(--bg);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      color: #222;
+    }
+    header {
+      background: var(--accent);
+      color: #fff;
+      padding: 1.2rem 0 1rem 0;
+      text-align: center;
+      font-size: 1.7rem;
+      letter-spacing: 1px;
+      font-weight: 600;
+      box-shadow: 0 2px 8px #0001;
+    }
+    nav {
+      background: #fff;
+      padding: 0.7rem 0;
+      text-align: center;
+      box-shadow: 0 2px 8px #0001;
+      margin-bottom: 2rem;
+    }
+    nav a {
+      color: var(--accent-2);
+      text-decoration: none;
+      margin: 0 1.2rem;
+      font-weight: 500;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: var(--accent);
+    }
+    .container {
+      max-width: 600px;
+      margin: 2.5rem auto 0 auto;
+      padding: 0 1rem;
+    }
+    .llm-card {
+      background: var(--card);
+      border-radius: 1.2rem;
+      box-shadow: 0 2px 16px #0002;
+      padding: 2rem 1.5rem 1.2rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .history {
+      min-height: 220px;
+      max-height: 340px;
+      overflow-y: auto;
+      margin-bottom: 1.2rem;
+      padding: 0.5rem 0.2rem;
+    }
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      margin-top: 2.5rem;
+      font-size: 1.1rem;
+    }
+    .msg {
+      margin-bottom: 1.1rem;
+      padding: 0.7rem 1rem;
+      border-radius: 1.1rem;
+      background: #f2f6ff;
+      box-shadow: 0 1px 4px #0001;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .msg.user {
+      background: #e6f0ff;
+      margin-left: 2.5rem;
+      border-top-right-radius: 0.3rem;
+    }
+    .msg.ai {
+      background: #f2f6ff;
+      margin-right: 2.5rem;
+      border-top-left-radius: 0.3rem;
+    }
+    .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+    .input-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .input-outer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #f6f8fb;
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      box-shadow: 0 1px 4px #0001;
+    }
+    textarea#prompt {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 1.1rem;
+      padding: 0.7rem 0.5rem;
+      outline: none;
+      resize: none;
+      min-height: 2.2rem;
+      max-height: 5.5rem;
+    }
+    .btn-circle, .icon-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 2.3rem;
+      height: 2.3rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-circle:hover, .icon-btn:hover {
+      background: var(--accent-2);
+    }
+    .plus-wrapper {
+      position: relative;
+    }
+    .plus-dropdown {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 2.7rem;
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px #0002;
+      min-width: 170px;
+      z-index: 10;
+      padding: 0.7rem 0.5rem;
+    }
+    .plus-dropdown.show {
+      display: block;
+    }
+    .group-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--accent-2);
+      margin-bottom: 0.3rem;
+    }
+    .opt-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .opt-list li {
+      padding: 0.4rem 0.7rem;
+      border-radius: 0.7rem;
+      cursor: pointer;
+      font-size: 1.05rem;
+      color: #222;
+      transition: background 0.18s;
+    }
+    .opt-list li:hover {
+      background: #e6f0ff;
+      color: var(--accent-2);
+    }
+    .clear-btn {
+      background: #fff;
+      color: var(--accent-2);
+      border: 1px solid var(--accent-2);
+      border-radius: 1.2rem;
+      padding: 0.4rem 1.2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: auto;
+      margin-top: 0.2rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .clear-btn:hover {
+      background: var(--accent-2);
+      color: #fff;
+    }
+    #global-spinner {
+      display: none;
+      position: fixed;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: #fff8;
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--accent-2);
+    }
+    #global-spinner.show {
+      display: flex;
+    }
+    @media (max-width: 600px) {
+      .container { max-width: 100vw; padding: 0; }
+      .llm-card { padding: 1rem 0.3rem; }
     }
   </style>
 </head>
 <body>
+
   <header>
     <h1>LLM Insights</h1>
   </header>
-
   <nav>
-    <!-- <a href="login.html">Login</a> | -->
-    <a href="student-dashboard.html">Home</a> |
-    <a href="Email.html">Email</a> |
-    <a href="attendance.html">Attendance</a> |
-    <a href="llm.html">LLM Insights</a> 
+    <a href="../student/student-dashboard.html">Home</a> |
+    <a href="../student/Email.html">Email</a> |
+    <a href="../student/attendance.html">Attendance</a> |
+    <a href="../student/llm.html">LLM Insights</a>
   </nav>
 
-  <section id="llmSection" style="width: 80%; margin: 20px auto; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-    <h2 style="text-align: center;">Ask the AI</h2>
-    <textarea id="prompt" placeholder="Ask the AI anything..." style="width: 100%; height: 100px; margin-bottom: 10px;"></textarea>
-    
-    <label for="modelSelect">Model:</label>
-    <select id="modelSelect" style="margin-bottom: 10px;">
-      <option value="mistral:latest">Mistral</option>
-      <option value="llama2:latest">Llama2</option>
-    </select>
-    
-    <label for="modeSelect">Mode:</label>
-    <select id="modeSelect" style="margin-bottom: 10px;">
-      <option value="default">Default</option>
-      <option value="creative">Creative</option>
-      <option value="precise">Precise</option>
-      <option value="summarize">Summarize</option>
-    </select>
-    
-    <button id="ask" style="padding: 10px 20px; border: none; border-radius: 6px; background-color: #007bff; color: white; cursor: pointer;">Ask</button>
-    <div style="position: relative;">
-      <pre id="response" style="background: #f1f1f1; padding: 10px; border-radius: 6px; margin-top: 10px; min-height: 40px; max-height: 300px; overflow-y: auto; word-break: break-word; white-space: pre-wrap;"></pre>
-      <div id="spinner" style="display:none; position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: auto; width: 32px; height: 32px; text-align: center; pointer-events: none;">
-        <span style="display:inline-block; width:32px; height:32px; border:4px solid #007bff; border-top:4px solid #f1f1f1; border-radius:50%; animation: spin 1s linear infinite;"></span>
+  <div class="container">
+    <div class="llm-card" role="region" aria-label="LLM chat">
+      <div id="chatHistory" class="history" aria-live="polite">
+        <div class="empty">Loading chat history…</div>
+      </div>
+      <div class="input-area" role="form" aria-label="Send message">
+        <div class="input-outer">
+          <div class="plus-wrapper" id="plusWrapper">
+            <button id="plusBtn" class="btn-circle" aria-haspopup="true" aria-expanded="false" title="More options">+</button>
+            <div id="plusDropdown" class="plus-dropdown" role="menu" aria-hidden="true">
+              <div>
+                <div class="group-title">Models</div>
+                <ul class="opt-list" id="modelsList">
+                  <li data-model="mistral:latest">Mistral</li>
+                  <li data-model="llama2:latest">LLaMA 2</li>
+                </ul>
+              </div>
+              <div style="margin-top:8px">
+                <div class="group-title">Conversation Mode</div>
+                <ul class="opt-list" id="modesList">
+                  <li data-mode="default">Default</li>
+                  <li data-mode="creative">Creative</li>
+                  <li data-mode="precise">Precise</li>
+                  <li data-mode="summarize">Summarize</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <textarea id="prompt" placeholder="Type your message..." aria-label="Message"></textarea>
+          <button id="micBtn" class="icon-btn" title="Voice (not implemented)">🎤</button>
+          <button id="sendBtn" class="btn-circle" title="Send message">➤</button>
+        </div>
+        <button class="clear-btn" id="btn-clear-history" title="Clear chat history">Clear</button>
       </div>
     </div>
-  </section>
+  </div>
+  <div id="current-model-label" style="display:none"></div>
+  <div id="current-mode-label" style="display:none"></div>
+  <div id="global-spinner">⏳</div>
 
   <script>
-    document.getElementById('ask').onclick = async () => {
-      const prompt = document.getElementById('prompt').value;
-      const model = document.getElementById('modelSelect').value;
-      const mode = document.getElementById('modeSelect').value;
-      const responseElement = document.getElementById('response');
-      const spinner = document.getElementById('spinner');
-      responseElement.textContent = '';
+    // ---------- Config / state ----------
+    const userId = 'student1'; // swap for real user id if available
+  const apiBase = 'http://localhost:5000/api/llm'; // use backend port for API calls in local dev
+    let selectedModel = 'mistral:latest';
+    let selectedMode = 'default';
+    const chatHistoryEl = document.getElementById('chatHistory');
+    const plusBtn = document.getElementById('plusBtn');
+    const plusDropdown = document.getElementById('plusDropdown');
+    const modelsList = document.getElementById('modelsList');
+    const modesList = document.getElementById('modesList');
+    const currentModelLabel = document.getElementById('current-model-label');
+    const currentModeLabel = document.getElementById('current-mode-label');
+    const promptEl = document.getElementById('prompt');
+    const sendBtn = document.getElementById('sendBtn');
+    const spinner = document.getElementById('global-spinner');
+    const clearHistoryBtn = document.getElementById('btn-clear-history');
 
-      if (!prompt) {
-        alert('Please enter a prompt.');
+    // ---------- Helpers ----------
+    function showSpinner(show){ spinner.classList.toggle('show', !!show); }
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    function renderHistory(history){
+      chatHistoryEl.innerHTML = '';
+      if(!history || history.length === 0){
+        chatHistoryEl.innerHTML = '<div class="empty">No chat history yet. Ask the AI something!</div>';
         return;
       }
+      history.forEach(h => {
+        const userBlock = document.createElement('div');
+        userBlock.className = 'msg user';
+        userBlock.innerHTML = `<div class="meta"><strong>You</strong> · <span style="color:var(--muted);font-size:.85rem">${new Date(h.timestamp).toLocaleString()}</span></div><div>${escapeHtml(h.prompt)}</div>`;
+        const aiBlock = document.createElement('div');
+        aiBlock.className = 'msg ai';
+        aiBlock.innerHTML = `<div class="meta"><strong>AI</strong></div><div>${escapeHtml(h.response || '(no response)')}</div>`;
+        chatHistoryEl.appendChild(userBlock);
+        chatHistoryEl.appendChild(aiBlock);
+      });
+      chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+    }
 
-      let finalPrompt = prompt;
-      if (mode === 'creative') finalPrompt = 'Be creative: ' + prompt;
-      else if (mode === 'precise') finalPrompt = 'Be precise: ' + prompt;
-      else if (mode === 'summarize') finalPrompt = 'Summarize: ' + prompt;
-
-      spinner.style.display = 'block';
-      try {
-        const response = await fetch('http://localhost:5000/api/llm', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: finalPrompt, model })
-        });
-        const data = await response.json();
-        responseElement.textContent = data.response || 'No response received';
-      } catch (error) {
-        responseElement.textContent = 'Failed to get a response from the server.';
-      } finally {
-        spinner.style.display = 'none';
+    async function loadHistory(){
+      try{
+        const res = await fetch(`${apiBase}/history?userId=${encodeURIComponent(userId)}`);
+        if(!res.ok) { chatHistoryEl.innerHTML = '<div class="empty">Failed to load history.</div>'; return; }
+        const json = await res.json();
+        renderHistory(json.history || []);
+      }catch(err){
+        chatHistoryEl.innerHTML = '<div class="empty">Unable to fetch history.</div>';
+        console.error(err);
       }
-    };
+    }
+
+    // ---------- LLM request ----------
+    async function sendPrompt(promptText){
+      if(!promptText) return;
+      showSpinner(true);
+      try{
+        let prompt = promptText;
+        if(selectedMode === 'creative') prompt = 'Be creative: ' + promptText;
+        else if(selectedMode === 'precise') prompt = 'Be precise: ' + promptText;
+        else if(selectedMode === 'summarize') prompt = 'Summarize: ' + promptText;
+        const payload = {
+          prompt,
+          model: selectedModel,
+          userId
+        };
+        const res = await fetch(apiBase, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok){
+          const txt = await res.text();
+          console.error('Server error:', res.status, txt);
+          alert('Server error: ' + res.status);
+          return;
+        }
+        const data = await res.json();
+        // reload history from server so backend is the source of truth
+        await loadHistory();
+      }catch(err){
+        console.error('LLM fetch error', err);
+        alert('Failed to reach LLM endpoint. Is the server & Ollama running?');
+      }finally{
+        showSpinner(false);
+      }
+    }
+
+    // ---------- events ----------
+    plusBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      plusDropdown.classList.toggle('show');
+      plusBtn.setAttribute('aria-expanded', plusDropdown.classList.contains('show'));
+    });
+
+    document.addEventListener('click', () => { plusDropdown.classList.remove('show'); plusBtn.setAttribute('aria-expanded','false'); });
+    plusDropdown.addEventListener('click', e => e.stopPropagation());
+
+    // choose model
+    modelsList.addEventListener('click', e => {
+      const li = e.target.closest('li[data-model]');
+      if(!li) return;
+      selectedModel = li.dataset.model;
+      currentModelLabel.innerHTML = `Model: <span style=\"font-weight:600\">${li.textContent.trim()}</span>`;
+      plusDropdown.classList.remove('show');
+    });
+
+    // choose mode
+    modesList.addEventListener('click', e => {
+      const li = e.target.closest('li[data-mode]');
+      if(!li) return;
+      selectedMode = li.dataset.mode;
+      currentModeLabel.textContent = `Mode: ${li.textContent.trim()}`;
+      plusDropdown.classList.remove('show');
+    });
+
+    // send handler
+    sendBtn.addEventListener('click', async () => {
+      const raw = promptEl.value.trim();
+      if(!raw) return;
+      let prompt = raw;
+      if(selectedMode === 'creative') prompt = 'Be creative: ' + raw;
+      else if(selectedMode === 'precise') prompt = 'Be precise: ' + raw;
+      else if(selectedMode === 'summarize') prompt = 'Summarize: ' + raw;
+      promptEl.value = '';
+      await sendPrompt(prompt);
+    });
+
+    // send on Enter
+    promptEl.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        sendBtn.click();
+      }
+    });
+
+    // clear history
+    clearHistoryBtn.addEventListener('click', async () => {
+      if(!confirm('Clear chat history for this user?')) return;
+      try{
+        const res = await fetch(`${apiBase}/history?userId=${encodeURIComponent(userId)}`, { method:'DELETE' });
+        if(!res.ok) { alert('Failed to clear history'); return; }
+        await loadHistory();
+      }catch(err){
+        console.error(err);
+        alert('Failed to clear history');
+      }
+    });
+
+    // ---------- initial load ----------
+    (function init(){
+      // set default labels
+      currentModelLabel.innerHTML = `Model: <span style=\"font-weight:600\">Mistral</span>`;
+      currentModeLabel.textContent = 'Mode: Default';
+      loadHistory();
+    })();
   </script>
 </body>
 </html>
