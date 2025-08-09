@@ -33,14 +33,31 @@
   <section id="llmSection" style="width: 80%; margin: 20px auto; padding: 20px; background: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
     <h2 style="text-align: center;">Ask the AI</h2>
     <textarea id="prompt" placeholder="Ask the AI anything..." style="width: 100%; height: 100px; margin-bottom: 10px;"></textarea>
+    
+    <label for="modelSelect">Model:</label>
+    <select id="modelSelect" style="margin-bottom: 10px;">
+      <option value="mistral">Mistral</option>
+      <option value="llama2">Llama2</option>
+      <option value="llama3">Llama3</option>
+    </select>
+    
+    <label for="modeSelect">Mode:</label>
+    <select id="modeSelect" style="margin-bottom: 10px;">
+      <option value="default">Default</option>
+      <option value="creative">Creative</option>
+      <option value="precise">Precise</option>
+      <option value="summarize">Summarize</option>
+    </select>
+    
     <button id="ask" style="padding: 10px 20px; border: none; border-radius: 6px; background-color: #007bff; color: white; cursor: pointer;">Ask</button>
-    <pre id="response" style="background: #f1f1f1; padding: 10px; border-radius: 6px; margin-top: 10px;"></pre>
+    <pre id="response" style="background: #f1f1f1; padding: 10px; border-radius: 6px; margin-top: 10px; min-height: 40px; max-height: 300px; overflow-y: auto; word-break: break-word; white-space: pre-wrap;"></pre>
   </section>
 
   <script>
     document.getElementById('ask').onclick = async () => {
-      console.log('Ask button clicked');
       const prompt = document.getElementById('prompt').value;
+      const model = document.getElementById('modelSelect').value;
+      const mode = document.getElementById('modeSelect').value;
       const responseElement = document.getElementById('response');
       responseElement.textContent = '';
 
@@ -49,27 +66,21 @@
         return;
       }
 
+      let finalPrompt = prompt;
+      if (mode === 'creative') finalPrompt = 'Be creative: ' + prompt;
+      else if (mode === 'precise') finalPrompt = 'Be precise: ' + prompt;
+      else if (mode === 'summarize') finalPrompt = 'Summarize: ' + prompt;
+
       try {
-        console.log('Sending request to http://localhost:5000/api/llm with prompt:', prompt);
         const response = await fetch('http://localhost:5000/api/llm', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
+          body: JSON.stringify({ prompt: finalPrompt, model })
         });
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          console.log('Received chunk:', chunk);
-          responseElement.textContent += chunk;
-        }
+        const data = await response.json();
+        responseElement.textContent = data.response || 'No response received';
       } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to get a response from the server.');
+        responseElement.textContent = 'Failed to get a response from the server.';
       }
     };
   </script>
