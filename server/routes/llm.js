@@ -4,17 +4,18 @@ import fetch from 'node-fetch';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const { prompt } = req.body;
+  const { prompt, model } = req.body;
 
   try {
     console.log('Received prompt:', prompt);
+    console.log('Selected model (from frontend):', model);
     console.log('Sending request to Ollama server...');
 
     const ollamaResponse = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'mistral',
+        model: model || 'mistral:latest',
         prompt: prompt,
         stream: false
       })
