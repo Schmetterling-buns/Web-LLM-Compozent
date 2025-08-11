@@ -146,24 +146,19 @@
       const loginMessage = document.getElementById('loginMessage');
       loginMessage.style.display = 'none';
       try {
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, role })
-        });
-        const result = await response.json();
-        if (response.ok) {
-          loginMessage.style.color = 'green';
-          loginMessage.textContent = 'Login successful! Redirecting...';
-          loginMessage.style.display = 'block';
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 2000);
-        } else {
-          loginMessage.style.color = 'red';
-          loginMessage.textContent = result.message || 'Invalid username or password.';
-          loginMessage.style.display = 'block';
-        }
+        // Dummy login: always succeed for demo
+        // In real app, replace with real API call
+        localStorage.setItem('currentUser', JSON.stringify({ username, role, isLoggedIn: true }));
+        loginMessage.style.color = 'green';
+        loginMessage.textContent = 'Login successful! Redirecting...';
+        loginMessage.style.display = 'block';
+        setTimeout(() => {
+          if (role === 'teacher') {
+            window.location.href = 'teacher/teacher-dashboard.html';
+          } else {
+            window.location.href = 'student/student-dashboard.html';
+          }
+        }, 1200);
       } catch (error) {
         loginMessage.style.color = 'red';
         loginMessage.textContent = 'An error occurred. Please try again later.';
