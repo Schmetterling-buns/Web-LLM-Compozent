@@ -197,20 +197,29 @@
       background: var(--accent-2);
       color: #fff;
     }
-    #global-spinner {
-      display: none;
-      position: fixed;
-      left: 0; top: 0; right: 0; bottom: 0;
-      background: #fff8;
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      color: var(--accent-2);
-    }
-    #global-spinner.show {
-      display: flex;
-    }
+      #global-spinner {
+        position: absolute;
+        top: 18px;
+        right: 24px;
+        z-index: 20;
+        display: none;
+      }
+      #global-spinner.show {
+        display: block;
+      }
+      .llm-spinner {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border: 4px solid var(--accent-2);
+        border-top: 4px solid #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     @media (max-width: 600px) {
       .container { max-width: 100vw; padding: 0; }
       .llm-card { padding: 1rem 0.3rem; }
@@ -231,6 +240,11 @@
 
   <div class="container">
     <div class="llm-card" role="region" aria-label="LLM chat">
+      <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem;justify-content:space-between;">
+        <div id="model-mode-indicator" style="font-size:1.08rem;color:var(--accent-2);font-weight:500;">
+          Model: <span id="model-indicator">Mistral</span> &nbsp;|&nbsp; Mode: <span id="mode-indicator">Default</span>
+        </div>
+      </div>
       <div id="chatHistory" class="history" aria-live="polite">
         <div class="empty">Loading chat history…</div>
       </div>
@@ -264,24 +278,27 @@
         <button class="clear-btn" id="btn-clear-history" title="Clear chat history">Clear</button>
       </div>
     </div>
+    <div id="global-spinner"><span class="llm-spinner"></span></div>
   </div>
   <div id="current-model-label" style="display:none"></div>
   <div id="current-mode-label" style="display:none"></div>
-  <div id="global-spinner">⏳</div>
 
   <script>
     // ---------- Config / state ----------
     const userId = 'student1'; // swap for real user id if available
   const apiBase = 'http://localhost:5000/api/llm'; // use backend port for API calls in local dev
-    let selectedModel = 'mistral:latest';
-    let selectedMode = 'default';
+  // Persisted model/mode
+  let selectedModel = localStorage.getItem('llm_selectedModel') || 'mistral:latest';
+  let selectedMode = localStorage.getItem('llm_selectedMode') || 'default';
     const chatHistoryEl = document.getElementById('chatHistory');
     const plusBtn = document.getElementById('plusBtn');
     const plusDropdown = document.getElementById('plusDropdown');
     const modelsList = document.getElementById('modelsList');
     const modesList = document.getElementById('modesList');
-    const currentModelLabel = document.getElementById('current-model-label');
-    const currentModeLabel = document.getElementById('current-mode-label');
+  const currentModelLabel = document.getElementById('current-model-label');
+  const currentModeLabel = document.getElementById('current-mode-label');
+  const modelIndicator = document.getElementById('model-indicator');
+  const modeIndicator = document.getElementById('mode-indicator');
     const promptEl = document.getElementById('prompt');
     const sendBtn = document.getElementById('sendBtn');
     const spinner = document.getElementById('global-spinner');
@@ -373,6 +390,8 @@
       const li = e.target.closest('li[data-model]');
       if(!li) return;
       selectedModel = li.dataset.model;
+      localStorage.setItem('llm_selectedModel', selectedModel);
+      modelIndicator.textContent = li.textContent.trim();
       currentModelLabel.innerHTML = `Model: <span style=\"font-weight:600\">${li.textContent.trim()}</span>`;
       plusDropdown.classList.remove('show');
     });
@@ -382,6 +401,8 @@
       const li = e.target.closest('li[data-mode]');
       if(!li) return;
       selectedMode = li.dataset.mode;
+      localStorage.setItem('llm_selectedMode', selectedMode);
+      modeIndicator.textContent = li.textContent.trim();
       currentModeLabel.textContent = `Mode: ${li.textContent.trim()}`;
       plusDropdown.classList.remove('show');
     });
@@ -421,9 +442,17 @@
 
     // ---------- initial load ----------
     (function init(){
-      // set default labels
-      currentModelLabel.innerHTML = `Model: <span style=\"font-weight:600\">Mistral</span>`;
-      currentModeLabel.textContent = 'Mode: Default';
+      // Set indicators from persisted or default values
+      let modelName = 'Mistral';
+      if(selectedModel === 'llama2:latest') modelName = 'LLaMA 2';
+      modelIndicator.textContent = modelName;
+      let modeName = 'Default';
+      if(selectedMode === 'creative') modeName = 'Creative';
+      else if(selectedMode === 'precise') modeName = 'Precise';
+      else if(selectedMode === 'summarize') modeName = 'Summarize';
+      modeIndicator.textContent = modeName;
+      currentModelLabel.innerHTML = `Model: <span style=\"font-weight:600\">${modelName}</span>`;
+      currentModeLabel.textContent = `Mode: ${modeName}`;
       loadHistory();
     })();
   </script>
